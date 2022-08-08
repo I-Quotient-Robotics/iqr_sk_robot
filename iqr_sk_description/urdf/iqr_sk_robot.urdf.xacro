@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="iqr_bunker_robot">
+
+  <xacro:property name="package_name" value="iqr_sk_description"/>
+
+  <!-- Include BUNKER ROBOT -->
+  <xacro:include filename="$(find bunker_description)/urdf/bunker.xacro"/>
+
+  <!-- Include accessories -->
+  <xacro:include filename="$(find ${package_name})/urdf/cr5.urdf.xacro"/>
+  <xacro:include filename="$(find ${package_name})/urdf/sensor_support.xacro"/>
+  <xacro:include filename="$(find ${package_name})/urdf/robotiq_gripper_base.xacro"/>
+  <xacro:include filename="$(find robotiq_85_description)/urdf/robotiq_85_gripper.urdf.xacro"/>
+
+  <!-- IQR sensor support -->
+  <xacro:sensor_support package="${package_name}" parent="mid_mount">
+    <origin xyz="-0.386 0 0" rpy="0 0 0"/>
+  </xacro:sensor_support>
+
+  <!-- CR5 support -->
+  <link name="cr5_support_link">
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="package://${package_name}/urdf/mesh/cr5_support.stl"/>
+      </geometry>
+      <material name="">
+        <color rgba="0.19 0.2 0.19 1"/>
+      </material>
+    </visual>
+  </link>
+  <joint name="cr5_support_link_joint" type="fixed">
+    <origin xyz="0.2384 0.0 0.0" rpy="0 0 0"/>
+    <parent link="mid_mount"/>
+    <child link="cr5_support_link"/>
+  </joint>
+
+  <!-- CR5 -->
+  <xacro:cr5_robot parent="cr5_support_link">
+    <origin xyz="0.0 0.0 0.010" rpy="0 0 1.5707"/>
+  </xacro:cr5_robot>
+
+  <!-- robotiq robotiq gripper base -->
+  <xacro:robotiq_gripper_base package="${package_name}" parent="arm_link_6">
+    <origin xyz="0 0 0" rpy="0 -1.5707 1.5707"/>
+  </xacro:robotiq_gripper_base>
+
+  <!-- robotiq 85 gripper -->
+  <xacro:robotiq_85_gripper prefix="" parent="robotiq_gripper_mount">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:robotiq_85_gripper>
+
+  <link name="end_effector"/>
+  <joint name="end_effector_joint" type="fixed">
+    <origin xyz="0.12 0.0 0.0" rpy="0 0 0"/>
+    <parent link="gripper_base_link"/>
+    <child link="end_effector"/>
+  </joint>
+
+
+</robot>

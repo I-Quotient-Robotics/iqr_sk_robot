@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<launch>
+  
+  <!-- Robot Description -->
+  <arg name="model" value="$(find xacro)/xacro --inorder $(find iqr_sk_description)/urdf/iqr_sk_robot.urdf.xacro"/>
+  <param name="robot_description" command="$(arg model)"/>
+  <!--node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/-->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+
+  <!-- robot -->
+  <include file="$(find bunker_base)/launch/base.launch">
+    <arg name="pub_description" value="false"/>
+    <arg name="enable_ekf" value="true"/>
+  </include>
+
+  <!-- Lidar -->
+  <include file="$(find ouster_ros)/ouster.launch">
+    <arg name="sensor_hostname" value="192.168.33.7"/>
+    <arg name="metadata"        value="meta.json"/>
+    <arg name="timestamp_mode"  value="TIME_FROM_PTP_1588"/>
+  </include>
+
+  <!-- pointcloud to laserscan -->
+  <include file="$(find iqr_sk_bringup)/launch/include/pointcloud_to_laserscan.launch.xml">
+  </include>
+  
+  <!-- KINECT DK -->
+  <include file="$(find iqr_sk_bringup)/launch/include/kinect_dk.launch.xml">
+  </include>
+
+  <!-- GPS -->
+  <include file="$(find nmea_ros_driver)/launch/bringup.launch">
+    <arg name="nmea_com"        value="/dev/gps_com"/>
+    <arg name="baudrate"        value="115200"/>
+    <arg name="frame_id"        value="/main_gps_link"/>
+    <arg name="pub_gps_odom_tf" value="false"/>
+  </include> 
+
+  <!-- IMU -->
+  <node pkg="jy901_driver" type="jy901_driver_node" name="jy901_driver_node" output="screen">
+    <param name="baudrate" type="int" value="115200"/>
+    <param name="port" type="string" value="/dev/imu_com"/>
+    <param name="looprate" type="int" value="50"/>
+  </node>
+
+  <!-- Universal Robots CR5 Setup -->
+  <include file="$(find dobot_bringup)/launch/bringup.launch">
+    <arg name="robot_ip" value="192.168.33.11"/>
+  </include>
+
+  <!-- Robotiq 85 Gripper Setup -->
+  <node pkg="robotiq_85_driver" type="robotiq_85_driver" name="robotiq_85_driver" respawn="true" output="screen">
+    <param name="num_grippers" value="1"/>
+    <param name="comport" value="/dev/gripper_com"/>
+    <param name="baud" value="115200"/>
+    <param name="prefix" value=""/>
+    <remap from="/gripper/joint_states" to="/joint_states"/>
+  </node>
+
+</launch>

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>iqr_sk_description</name>
+  <version>0.0.0</version>
+  <description>The iqr_sk_description package</description>
+
+  <author email="hua.fan@iquotient-robot.com">QuartzYan</author>
+  <maintainer email="hua.fan@iquotient-robot.com">QuartzYan</maintainer>
+
+  <!-- LICENSE -->
+  <license>MIT</license>
+
+  <!-- DEPEND -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>bunker_description</build_depend>
+  <build_export_depend>bunker_description</build_export_depend>
+  <exec_depend>bunker_description</exec_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
